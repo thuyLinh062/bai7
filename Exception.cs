@@ -40,7 +40,13 @@ namespace QuanLyThietBiPhongHoc
     }
 
     //Không tìm thấy lựa chọn phù hợp
-    public class NoSuitableItemException : Exception
+    public class NoSuitableItemException<T> : Exception
     {
+        public IReadOnlyList<T> Candidates {get;}
+        public NoSuitableItemException(IReadOnlyList<T> candidates)
+            :base ($"Danh sách ứng viên rỗng {candidates}, không thể thực hiện lựa chọn thiết bị.")
+        {
+            Candidates = candidates;
+        }
     }
 }
