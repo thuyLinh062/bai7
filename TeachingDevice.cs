@@ -18,36 +18,34 @@ namespace QuanLyThietBiPhongHoc
         public string StorageLocation { get; }
 
         //Trạng thái hoạt động 
-        public DeviceStatus Status {get; set;}
+        public DeviceStatus Status {get; protected set;}
         
         protected TeachingDevice(
             string id, 
             string name, 
-            string storageLocation,
-            DeviceStatus status)
+            string storageLocation)
         {
-            if(string.IsNullOrWhiteSpace(Id))
+            if(string.IsNullOrWhiteSpace(id))
             {
                 throw new ArgumentException("ID không được để trống");
             }
 
-            if(string.IsNullOrWhiteSpace(Name))
+            if(string.IsNullOrWhiteSpace(name))
             {
-                    throw new ArgumentException("ID không được để trống");
+                    throw new ArgumentException("Tên không được để trống");
             }
 
-            if(string.IsNullOrWhiteSpace(StorageLocation))
+            if(string.IsNullOrWhiteSpace(storageLocation))
             {
-                    throw new ArgumentException("ID không được để trống");
+                    throw new ArgumentException("Vị trí lưu trữ không được để trống");
             }      
 
             Id = id;
             Name = name;
             StorageLocation = storageLocation;
-            Status = status;     
+            Status = DeviceStatus.Available;     
         }
 
-        //Cung cấp phương thức trừu tượng tính chi phí bảo trì dự kiến trong một năm.
         public abstract bool IsReadyForUse();
 
         public abstract double GetDefaultPriorityScore();

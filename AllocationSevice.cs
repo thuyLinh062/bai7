@@ -22,14 +22,17 @@ namespace QuanLyThietBiPhongHoc
             this.strategy = newStrategy ?? throw new ArgumentNullException(nameof(newStrategy));
         }
 
-        public T Allocate(Predicate<T> additionalCondition)
+        public T Allocate(Predicate<T>? additionalCondition = null)
         {
             var candidates = repository.GetAll()
-                                   .Where(item => additionalCondition(item))
-                                   .ToList();
+                .Where(d => d.IsReadyForUse())
+                .Where(d => additionalCondition == null || additionalCondition(d))
+                .ToList()
+                .AsReadOnly();
 
-        // Đưa danh sách các ứng viên hợp lệ vào chiến lược hiện tại để chọn ra thiết bị tối ưu
-        return strategy.Select(candidates);
+            var selected = strategy.Select(candidates);
+            selected.Borrow();
+            return selected;
         }
     }
 }

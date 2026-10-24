@@ -14,26 +14,20 @@ namespace QuanLyThietBiPhongHoc
             string storageLocation,
             DeviceStatus status,
             int batteryLevel
-        ) : base (id, name, storageLocation, status)
+        ) : base (id, name, storageLocation)
         {
             if(batteryLevel < 0 || batteryLevel >100)
             {
                 throw new ArgumentOutOfRangeException(nameof(batteryLevel), "Mức pin phải từ 0 đến 100");
             }
 
+            Status = status;
             BatteryLevel = batteryLevel;
         }
 
         public override bool IsReadyForUse()
             {
-                if(BatteryLevel < 20)
-                {
-                    Console.WriteLine("Mức pin dưới 20%");
-                    return false;
-                }
-
-                Status = DeviceStatus.Available;
-                return true;
+                return Status == DeviceStatus.Available && BatteryLevel>=20;
             }
 
         public override double GetDefaultPriorityScore()
@@ -52,8 +46,11 @@ namespace QuanLyThietBiPhongHoc
             string storageLocation,
             DeviceStatus status,
             IReadOnlySet<string> compatibleRooms
-        ) : base(id, name, storageLocation, status)
+        ) : base(id, name, storageLocation)
         {
+            if (compatibleRooms == null) throw new ArgumentNullException(nameof(compatibleRooms));
+            
+            Status = status;        
             CompatibleRooms = compatibleRooms;
         }
 
@@ -83,6 +80,7 @@ namespace QuanLyThietBiPhongHoc
             return 100;
         }
     }
+    
     public class WirelessMicrophone : TeachingDevice
     {
         public int BatteryLevel { get; }
@@ -95,7 +93,7 @@ namespace QuanLyThietBiPhongHoc
             DeviceStatus status,
             int batteryLevel,
             int signalQuality
-        ) : base(id, name, storageLocation, status)
+        ) : base(id, name, storageLocation)
         {
             if(batteryLevel < 0 || batteryLevel >100)
             {
@@ -104,21 +102,19 @@ namespace QuanLyThietBiPhongHoc
 
             if(signalQuality < 0 || signalQuality > 100)
             {
-                throw new ArgumentOutOfRangeException(nameof(signalQuality), "Mức pin phải từ 0 đến 100");
+                throw new ArgumentOutOfRangeException(nameof(signalQuality), "Chất lượng tín hiệu phải từ 0 đến 100");
             }
 
+            
+            Status = status;
             BatteryLevel = batteryLevel;
             SignalQuality = signalQuality;
         }
 
         public override bool IsReadyForUse()
         {
-            if(BatteryLevel >=30 && SignalQuality >=40)
-            {
-                Status = DeviceStatus.Available;
-                return true;
-            }
-            return false;
+            
+            return Status == DeviceStatus.Available && BatteryLevel>=30 && SignalQuality >=40; 
         }
 
         public override double GetDefaultPriorityScore()
